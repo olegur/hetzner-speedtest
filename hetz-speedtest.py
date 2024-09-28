@@ -15,16 +15,19 @@ hosts = {
 
 
 # get latency of host
-def get_latency(host):
+def get_latencyavg(host):
   if platform.system() == "Windows":
     return 0
   try:
-    output = subprocess.check_output(["ping", "-c", "1", host])
+    output = subprocess.check_output(["ping", "-c", "10", host])
     output = output.decode("utf-8")
     output = output.split("\n")
+    listavg = []
     for line in output:
       if "time=" in line:
-        return float(line.split("time=")[1].split(" ")[0])
+        listavg.append(float(line.split("time=")[1].split(" ")[0]))
+    #calculate average
+    return sum(listavg) / len(listavg)
   except:
     return 0
 
@@ -34,7 +37,7 @@ def main() :
     if platform.system() == "Windows":
       print("Can't measure latency on Windows")
       continue
-    print(f"Host: {host} Latency: {get_latency(host)}ms")
+    print(f"Host: {host} Latency: {get_latencyavg(host)}ms")
 
 if __name__ == "__main__" :
   main()
